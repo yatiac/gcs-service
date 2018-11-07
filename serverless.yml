@@ -1,0 +1,18 @@
+
+service: gcs-service
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+
+functions:
+  CreateDatabase:
+    handler: handler.createDatabase
+    events:
+      - http:
+          path: /createDatabase
+          method: get
+          
+
+plugins:
+  - serverless-offline
