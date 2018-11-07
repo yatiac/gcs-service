@@ -9,10 +9,25 @@ functions:
   CreateDatabase:
     handler: handler.createDatabase
     events:
-      - http:
-          path: /createDatabase
-          method: get
-          
+      - http: GET createDatabase
+  # WORK ORDERS
+  CreateWorkOrder:
+    handler: handler.createWorkOrder
+    events:
+      - http: POST workorder
+  # VEHICLES
+  CreateVehicle:
+    handler: handler.createVehicle
+    events:
+      - http: POST vehicle
+  CreateOwner:
+    handler: handler.createOwner
+    events:
+      - http: POST owner
+  AddWork:
+    handler: handler.addWork
+    events:
+      - http: POST work
 
 plugins:
   - serverless-offline

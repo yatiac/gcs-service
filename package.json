@@ -1,0 +1,22 @@
+{
+  "name": "gcs-service",
+  "version": "1.0.0",
+  "description": "Service for the GCS system",
+  "main": "handler.js",
+  "dependencies": {
+    "promise-mysql": "^3.3.1"
+  },
+  "devDependencies": {
+    "serverless-offline": "^3.31.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yatiac/gcs-service.git"
+  },
+  "author": "Yatiac",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/yatiac/gcs-service/issues"
+  },
+  "homepage": "https://github.com/yatiac/gcs-service#readme"
+}
