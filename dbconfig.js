@@ -1,9 +1,11 @@
 // include your actual details
-let config = {
+const config = {
+  connectionParams: {
     host: 'localhost',
     user: 'root',
-    password: 'root',
-    database: 'foo'
-  };
-   
-  module.exports = config;
+    password: 'password'
+  },
+  databaseName: 'gcsdb'
+}
+
+module.exports = config;
