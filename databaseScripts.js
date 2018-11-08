@@ -1,3 +1,4 @@
+//#region CREATE TABLES
 // CREATE TABLE WORK ORDERS
 module.exports.CREATE_TABLE_WORKORDERS= () => {
     return `create table if not exists work_orders(
@@ -20,6 +21,7 @@ module.exports.CREATE_TABLE_VEHICLES = () => {
         model varchar(48) not null,
         color varchar(48) not null,
         vin varchar(255) not null,
+        year int not null,
         owner_id int not null
     )`
 };
@@ -67,4 +69,61 @@ module.exports.CREATE_TABLE_WORKS = () => {
         date datetime not null,
         comments varchar(255)
     )`
+};
+//#endregion
+
+//#region SELECTS
+module.exports.SELECT_VEHICLE_BY_PLATE = () => {
+    return `SELECT vehicles.id, plate, maker, model, year, color, vin, name
+            FROM vehicles 
+            INNER JOIN owners
+            ON vehicles.owner_id = owners.id
+            WHERE plate = ?;`
+};
+//#endregion
+
+//#region INSERTS
+// VEHICLE
+module.exports.INSERT_VEHICLE = () => {
+    return `Insert into vehicles(
+        plate,
+        maker,
+        model,
+        color,
+        vin,
+        year,
+        owner_id)
+    VALUES(?,?,?,?,?,?,?); 
+    `
+};
+
+module.exports.INSERT_OWNER = () => {
+    return `INSERT INTO owners(
+                    name,
+                    phone,
+                    email
+                ) VALUES(?,?,?);`
+};
+
+module.exports.ADD_WORK = () => {
+    return `INSERT INTO works(
+                    work_order_id,
+                    price,
+                    date,
+                    comments
+    ) VALUES(?,?,?,?);`
 }
+
+//OWNER
+
+//WORK ORDER
+
+//#endregion
+
+//#region UPDATES
+
+//#endregion
+
+//#region DELETES
+
+//#endregion

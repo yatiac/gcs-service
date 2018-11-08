@@ -1,21 +1,17 @@
 'use strict';
 const mysql = require('promise-mysql');
+const dbscripts = require('./databaseScripts');
+const dbmanager = require('./databaseManager');
+const { CreateResponse } = require('./responseManager');
 const dbconfig = require('./dbconfig');
-const dbscripts = require('./databaseCreation');
 
-const CreateResponse = (code, body) => {
-  var response = {
-    statusCode: code,
-    body: JSON.stringify(body)
-  }
-  return response;
-};
-
-module.exports.createDatabase = (event, context) => {
+module.exports.createDatabase = (event, context, callback) => {
   var connection;
-  mysql.createConnection(dbconfig)
-    .then(conn => {
+  mysql.createConnection(dbconfig.connectionParams)
+    .then(conn => {      
       connection = conn;
+      connection.query(`CREATE database if not exists ${dbconfig.databaseName}`);
+      connection.changeUser({database: dbconfig.databaseName});
       connection.query(dbscripts.CREATE_TABLE_WORKORDERS());
       console.log('Table Work Orders Created');      
   }).then(() => {
@@ -39,16 +35,59 @@ module.exports.createDatabase = (event, context) => {
   })
   .then(()=>{
     connection.end();
+  }).then(() => {
+    context.done(null, CreateResponse(200, {message: 'Database created succesfully'}));
+  }).catch((error) => {
+    if (connection && connection.end) connection.end();
+    //logs out the error
+    console.log(error);    
+    callback(null, CreateResponse(500, error));
   });
-  context.done(null,{message: 'Success'});
 };
 
 module.exports.createWorkOrder = async (event, context, callback) => {  
-  const {type_id, status_id, mechanic_id, vehicle_id, symptoms} = JSON.parse(event.body);  
-  return CreateResponse(201,{id: 1});
+  const body = JSON.parse(event.body);
+  const result = Object.keys(body).map((key) => {
+    return body[key];
+  })
+  console.log(result);
+  return callback(null,CreateResponse(201,result));
 };
 
-module.exports.createVehicle = async (event, context) => {
-  const {plate, maker, model, color, vin, owner_id} = JSON.parse(event.body);
-  return CreateResponse(201, {id: 1});
-}
+module.exports.createVehicle = (event, context, callback) => {
+  const body = JSON.parse(event.body);  
+  const insertScript = dbscripts.INSERT_VEHICLE();
+  dbmanager.INSERT_ITEM(insertScript, body, callback)
+  .then((insertedID)=>{
+    body.id = insertedID;
+    callback(null, CreateResponse(201,body));
+  });
+};
+
+module.exports.createOwner = (event, context, callback) => {
+  const body = JSON.parse(event.body);  
+  const insertScript = dbscripts.INSERT_OWNER();
+  dbmanager.INSERT_ITEM(insertScript, body, callback)
+  .then((insertedID)=>{
+    body.id = insertedID;
+    callback(null, CreateResponse(201,body));
+  });
+};
+
+module.exports.addWork = (event, context, callback) => {
+  const body = JSON.parse(event.body);  
+  const insertScript = dbscripts.ADD_WORK();
+  dbmanager.INSERT_ITEM(insertScript, body, callback)
+  .then((insertedID)=>{
+    body.id = insertedID;
+    callback(null, CreateResponse(201,body));
+  });
+};
+
+module.exports.getVehicleByPlate = (event, context, callback) => {
+  const plate = event.pathParameters.plate;
+  dbmanager.GET_VEHICLE_BY_PLATE(plate,callback)
+  .then((vehicle) => {
+    callback(null, CreateResponse(200,vehicle));
+  });
+};

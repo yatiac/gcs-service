@@ -20,6 +20,15 @@ functions:
     handler: handler.createVehicle
     events:
       - http: POST vehicle
+  GetVehicleByPlate:
+    handler: handler.getVehicleByPlate
+    events:
+      - http: GET vehicle/{plate}
+        request:
+            parameters:
+              paths:
+                plate: true
+  # OWNERS
   CreateOwner:
     handler: handler.createOwner
     events:
