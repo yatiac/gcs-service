@@ -47,7 +47,8 @@ module.exports.GET_VEHICLE_BY_PLATE = (plate, callback) => {
         })
         .then((res) => {
             console.log(res);
-            console.log('query executed');
+            console.log('query executed');                     
+            connection.end();
             return res;
         })
         .catch((error) => {
